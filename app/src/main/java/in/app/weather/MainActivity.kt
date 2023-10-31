@@ -1,8 +1,11 @@
 package `in`.app.weather
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import `in`.app.weather.databinding.ActivityMainBinding
@@ -33,6 +36,8 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
                     fetchWeatherData(query)
+                    hideKeyboard(searchView,this@MainActivity)
+
                 }
                 return true
             }
@@ -82,6 +87,7 @@ return true           }
                             binding.tvLocation.setText(cityName)
                             changeImages(condition)
 
+
                         }
 
                         Log.e("WeatherData", "Temperature: $temperature°C")
@@ -109,15 +115,15 @@ return true           }
                 binding.root.setBackgroundResource(R.drawable.sunny_background)
                 binding.lavAnimation.setAnimation(R.raw.weateranimation)
             }
-            "Partly Clouds","Clouds","Overcast","Mist","Foggy" -> {
+            "Haze","Partly Clouds","Clouds","Overcast","Mist","Foggy" -> {
                 binding.root.setBackgroundResource(R.drawable.cloudbackground)
                 binding.lavAnimation.setAnimation(R.raw.clouds)
             }
-            "Light Rain","Drizzle","Moderate Rain","Showers","Heavy Rain"->{
+            "Rain","Light Rain","Drizzle","Moderate Rain","Showers","Heavy Rain"->{
                 binding.root.setBackgroundResource(R.drawable.rainybackground)
                 binding.lavAnimation.setAnimation(R.raw.rainy)
             }
-            "Light Snow","Moderate Snow","Heavy Snow","Blizzard"->{
+            "Snow","Light Snow","Moderate Snow","Heavy Snow","Blizzard"->{
                 binding.root.setBackgroundResource(R.drawable.snowbackground)
                 binding.lavAnimation.setAnimation(R.raw.snowy)
             }
@@ -142,4 +148,8 @@ return true           }
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         return sdf.format((Date(timestamp*1000)))
     }
+
+}fun hideKeyboard(view: View, context: Context) {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(view.windowToken, 0)
 }
