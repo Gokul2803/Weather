@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import `in`.app.weather.databinding.ActivityMainBinding
@@ -82,11 +83,11 @@ return true           }
                             binding.sunset.text = "${time(sunSet)}"
                             binding.sea.text = "$seaLevel hPa"
                             binding.tvDay.text=dayName(System.currentTimeMillis())
+                            binding.tvDay2.text=dayName(System.currentTimeMillis())
                             binding.tvDate.text=date()
                             binding.svCity.setQuery(cityName, false)
                             binding.tvLocation.setText(cityName)
                             changeImages(condition)
-
 
                         }
 
@@ -106,7 +107,6 @@ return true           }
                 Log.e("WeatherData", "Network request failed. Error: ${e.message}", e)
             }
         }
-
     }
 
     private fun changeImages(condition: String) {
@@ -119,7 +119,7 @@ return true           }
                 binding.root.setBackgroundResource(R.drawable.cloudbackground)
                 binding.lavAnimation.setAnimation(R.raw.clouds)
             }
-            "Rain","Light Rain","Drizzle","Moderate Rain","Showers","Heavy Rain"->{
+            "Rain","Light Rain","Drizzle","Moderate Rain","Showers","Heavy Rain","Thunderstorm"->{
                 binding.root.setBackgroundResource(R.drawable.rainybackground)
                 binding.lavAnimation.setAnimation(R.raw.rainy)
             }
