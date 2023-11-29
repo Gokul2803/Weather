@@ -24,12 +24,12 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private var mediaPlayer:MediaPlayer?=null
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        mediaPlayer = MediaPlayer.create(this,R.raw.error_sound)
+        mediaPlayer = MediaPlayer.create(this, R.raw.error_sound)
         setContentView(binding.root)
 
         fetchWeatherData("Delhi")
@@ -63,9 +63,7 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val response: Response<WeatherApp> = apiService.getWeatherData(
-                    cityName,
-                    "0cd2bcbde5b08935ff2a4ea21fc927ae",
-                    "metric"
+                    cityName, "0cd2bcbde5b08935ff2a4ea21fc927ae", "metric"
                 )
 
                 if (response.isSuccessful) {
@@ -102,7 +100,7 @@ class MainActivity : AppCompatActivity() {
                             binding.tvDate.text = date()
                             binding.svCity.setQuery(cityName, false)
                             binding.tvLocation.setText(cityName)
-                            changeImages(condition)
+                            changeImages(condition,sunRise,sunSet)
 
                         }
 
@@ -121,46 +119,93 @@ class MainActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 Log.e("WeatherData", "Network error: ${e.message}", e)
                 runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Network error. Please check your connection.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Network error. Please check your connection.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     playErrorSound()
                 }
             } catch (e: Exception) {
                 Log.e("WeatherData", "Unexpected error: ${e.message}", e)
                 runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Unexpected error occurred.", Toast.LENGTH_SHORT).show()
-                     playErrorSound()
+                    Toast.makeText(
+                        this@MainActivity, "Unexpected error occurred.", Toast.LENGTH_SHORT
+                    ).show()
+                    playErrorSound()
                 }
             }
         }
     }
-    private fun changeImages(condition: String) {
-        when (condition) {
-            "Clear Sky", "Sunny", "Clear" -> {
-                binding.root.setBackgroundResource(R.drawable.sunny_background)
-                binding.lavAnimation.setAnimation(R.raw.weateranimation)
+
+    private fun changeImages(condition: String,sunrise:Long,sunset:Long) {
+        val currentTime = System.currentTimeMillis()/1000
+        val isDaytime = currentTime in sunrise..sunset
+        when{
+            isDaytime->
+            when (condition) {
+                "Clear Sky", "Sunny", "Clear" -> {
+                    binding.root.setBackgroundResource(R.drawable.sunny_background)
+                    binding.lavAnimation.setAnimation(R.raw.weateranimation)
+                }
+
+                "Haze", "Partly Clouds", "Clouds", "Overcast", "Mist", "Foggy" -> {
+                    binding.root.setBackgroundResource(R.drawable.cloudbackground)
+                    binding.lavAnimation.setAnimation(R.raw.clouds)
+                }
+
+                "Rain", "Light Rain", "Drizzle", "Moderate Rain", "Showers", "Heavy Rain", "Thunderstorm" -> {
+                    binding.root.setBackgroundResource(R.drawable.rainybackground)
+                    binding.lavAnimation.setAnimation(R.raw.rainy)
+                }
+
+                "Snow", "Light Snow", "Moderate Snow", "Heavy Snow", "Blizzard" -> {
+                    binding.root.setBackgroundResource(R.drawable.snowbackground)
+                    binding.lavAnimation.setAnimation(R.raw.snowy)
+                }
+
+                else -> {
+                    binding.root.setBackgroundResource(R.drawable.sunny_background)
+                    binding.lavAnimation.setAnimation(R.raw.weateranimation)
+                }
+
             }
 
-            "Haze", "Partly Clouds", "Clouds", "Overcast", "Mist", "Foggy" -> {
-                binding.root.setBackgroundResource(R.drawable.cloudbackground)
-                binding.lavAnimation.setAnimation(R.raw.clouds)
-            }
+            else->{
+                when (condition) {
+                    "Clear Sky", "Sunny", "Clear" -> {
+                        binding.root.setBackgroundResource(R.drawable.nightbackground)
+                        binding.lavAnimation.setAnimation(R.raw.weateranimation)
+                    }
 
-            "Rain", "Light Rain", "Drizzle", "Moderate Rain", "Showers", "Heavy Rain", "Thunderstorm" -> {
-                binding.root.setBackgroundResource(R.drawable.rainybackground)
-                binding.lavAnimation.setAnimation(R.raw.rainy)
-            }
+                    "Haze", "Partly Clouds", "Clouds", "Overcast", "Mist", "Foggy" -> {
+                        binding.root.setBackgroundResource(R.drawable.cloudbackground)
+                        binding.lavAnimation.setAnimation(R.raw.clouds)
+                    }
 
-            "Snow", "Light Snow", "Moderate Snow", "Heavy Snow", "Blizzard" -> {
-                binding.root.setBackgroundResource(R.drawable.snowbackground)
-                binding.lavAnimation.setAnimation(R.raw.snowy)
-            }
+                    "Rain", "Light Rain", "Drizzle", "Moderate Rain", "Showers", "Heavy Rain", "Thunderstorm" -> {
+                        binding.root.setBackgroundResource(R.drawable.rainybackground)
+                        binding.lavAnimation.setAnimation(R.raw.rainy)
+                    }
 
-            else -> {
-                binding.root.setBackgroundResource(R.drawable.sunny_background)
-                binding.lavAnimation.setAnimation(R.raw.weateranimation)
+                    "Snow", "Light Snow", "Moderate Snow", "Heavy Snow", "Blizzard" -> {
+                        binding.root.setBackgroundResource(R.drawable.snowbackground)
+                        binding.lavAnimation.setAnimation(R.raw.snowy)
+                    }
+
+                    else -> {
+                        binding.root.setBackgroundResource(R.drawable.sunny_background)
+                        binding.lavAnimation.setAnimation(R.raw.weateranimation)
+                    }
+
+                }
             }
 
         }
+
+
+
+
         binding.lavAnimation.playAnimation()
     }
 
@@ -178,9 +223,11 @@ class MainActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         return sdf.format((Date(timestamp * 1000)))
     }
-    private fun playErrorSound(){
+
+    private fun playErrorSound() {
         mediaPlayer?.start()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         mediaPlayer?.release()
