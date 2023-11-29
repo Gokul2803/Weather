@@ -28,6 +28,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+        <activity android:name=".GoLive"
+            android:exported="true"/>
     </application>
 
 </manifest>

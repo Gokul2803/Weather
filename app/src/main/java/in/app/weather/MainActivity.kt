@@ -2,6 +2,7 @@ package `in`.app.weather
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager.*
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -21,6 +22,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -34,6 +36,12 @@ class MainActivity : AppCompatActivity() {
 
         fetchWeatherData("Delhi")
         SearchCity()
+
+        binding.btnGoLive.setOnClickListener() {
+            val intent = Intent(this@MainActivity,GoLive::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun SearchCity() {
@@ -54,6 +62,8 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
+
+
 
     @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("SetTextI18n")
@@ -100,7 +110,9 @@ class MainActivity : AppCompatActivity() {
                             binding.tvDate.text = date()
                             binding.svCity.setQuery(cityName, false)
                             binding.tvLocation.setText(cityName)
+
                             changeImages(condition,sunRise,sunSet)
+
 
                         }
 

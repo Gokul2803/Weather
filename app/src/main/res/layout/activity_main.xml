@@ -34,6 +34,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sv_city" />
 
+    <Button
+        android:id="@+id/btn_goLive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go Live"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sv_city"
+        />
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lav_animation"
         android:layout_width="150dp"
